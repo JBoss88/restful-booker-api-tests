@@ -1,47 +1,45 @@
-name: Restful-Booker API Tests
+name: Playwright API Tests
+
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-
-# Keeping your Node.js warning fix from the UI project!
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  pull_request:
+    branches: [main]
 
 jobs:
-  api-tests:
+  test:
+    name: Run API Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      CI: true
+      API_USERNAME: ${{ secrets.API_USERNAME }}
+      API_PASSWORD: ${{ secrets.API_PASSWORD }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      # Even for API tests, Playwright sometimes wants its underlying engine installed
-      - name: Install Playwright engine
-        env:
-          # This tells Linux: "I am a robot, do not ask me Yes/No questions"
-          DEBIAN_FRONTEND: noninteractive
-        run: npx playwright install chromium --with-deps
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
 
-      - name: Execute API Tests
-        env:
-          API_USERNAME: ${{ secrets.API_USERNAME }}
-          API_PASSWORD: ${{ secrets.API_PASSWORD }}
-        run: npm test
+      - name: Run Playwright API tests
+        run: npx playwright test
 
-      - name: Save HTML Report
+      - name: Upload HTML report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: api-test-report
+          name: playwright-report
           path: playwright-report/
           retention-days: 14
