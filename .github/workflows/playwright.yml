@@ -33,6 +33,9 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Execute API Tests
+        env:
+          API_USERNAME: ${{ secrets.API_USERNAME }}
+          API_PASSWORD: ${{ secrets.API_PASSWORD }}
         run: npm test
 
       - name: Save HTML Report
