@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:auth": "npx playwright test tests/api/auth.spec.ts",
+    "test:booking": "npx playwright test tests/api/booking.spec.ts",
+    "test:filter": "npx playwright test tests/api/filter.spec.ts",
+    "test:validation": "npx playwright test tests/api/validation.spec.ts",
+    "test:report": "npx playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
